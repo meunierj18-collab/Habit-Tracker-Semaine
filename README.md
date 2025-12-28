@@ -375,3 +375,35 @@ function exportPDF() {
   tracker.style.display = "table";
 }
 </script>
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #CAD2C5;
+  padding: 8px;
+  text-align: center;
+  background: #F7FBF9;
+}
+
+/* 👉 Colonne Habitudes figée */
+th:first-child,
+td:first-child {
+  position: sticky;
+  left: 0;
+  background: #E9F5EF;
+  z-index: 2;
+  text-align: left;
+  font-weight: 600;
+}
+
+/* Pour que l'en-tête reste au-dessus */
+th:first-child {
+  z-index: 3;
+}
+
+<div style="overflow-x:auto;">
+  <!-- TON TABLEAU ICI -->
+</div>
