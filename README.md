@@ -233,3 +233,87 @@ function renderBilan() {
 }
 </script>
 
+<script>
+function calculateDailyDetails() {
+  const days = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+  const habitsCount = 11;
+  const checkboxes = document.querySelectorAll("input[type=checkbox]");
+  const details = [];
+
+  days.forEach((day, d) => {
+    let count = 0;
+    for (let h = 0; h < habitsCount; h++) {
+      const index = h * 7 + d;
+      if (checkboxes[index]?.checked) count++;
+    }
+    const percent = Math.round((count / habitsCount) * 100);
+    details.push({ day, count, percent });
+  });
+
+  return details;
+}
+</script>
+
+<script>
+function renderBilan() {
+  const history = JSON.parse(localStorage.getItem("history")) || [];
+  const weeklyPercent = calculateWeeklySummary();
+  const daily = calculateDailyDetails();
+
+  let dailyHtml = "<ul>";
+  daily.forEach(d => {
+    dailyHtml += `<li>${d.day} : ${d.count} / 11 → ${d.percent}%</li>`;
+  });
+  dailyHtml += "</ul>";
+
+  document.getElementById("bilan-semaine").innerHTML = `
+    <strong>📊 Cette semaine</strong><br>
+    Réussite globale : <b>${weeklyPercent}%</b><br><br>
+    <strong>Détail jour par jour :</strong>
+    ${dailyHtml}
+  `;
+
+  if (history.length === 0) {
+    document.getElementById("historique").innerHTML =
+      "<p>Aucun historique pour le moment.</p>";
+    return;
+  }
+
+  let html = "<ul>";
+  history.forEach(w => {
+    html += `<li>📅 ${w.date} — ${w.weekly}%</li>`;
+  });
+  html += "</ul>";
+
+  document.getElementById("historique").innerHTML = html;
+}
+</script>
+
+<script>
+function getWeekNumber(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+function checkWeeklyReset() {
+  const now = new Date();
+  const currentWeek = getWeekNumber(now);
+  const savedWeek = localStorage.getItem("weekNumber");
+
+  if (savedWeek && savedWeek != currentWeek) {
+    archiveWeek();
+    localStorage.removeItem("currentWeek");
+  }
+
+  localStorage.setItem("weekNumber", currentWeek);
+}
+
+window.onload = () => {
+  checkWeeklyReset();
+  loadData();
+};
+</script>
+
