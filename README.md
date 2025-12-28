@@ -161,3 +161,75 @@ window.onload = loadData;
   font-size:16px;">
 📊 Enregistrer le bilan de la semaine
 </button>
+
+<div id="bilan" style="display:none; margin-top:24px;">
+  <h2>📊 Bilan & historique</h2>
+
+  <div id="bilan-semaine" style="margin-bottom:16px;"></div>
+
+  <h3>📅 Historique des semaines</h3>
+  <div id="historique"></div>
+
+  <button onclick="showTracker()" style="
+    margin-top:16px;
+    padding:12px;
+    width:100%;
+    background:#52796F;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:16px;">
+⬅️ Retour à la semaine
+  </button>
+</div>
+
+<button onclick="showBilan()" style="
+  margin-top:12px;
+  padding:12px;
+  width:100%;
+  background:#84A98C;
+  color:white;
+  border:none;
+  border-radius:8px;
+  font-size:16px;">
+📈 Voir le bilan & l’historique
+</button>
+
+<script>
+function showBilan() {
+  document.querySelector("table").style.display = "none";
+  document.querySelector("button").style.display = "none";
+  document.getElementById("bilan").style.display = "block";
+  renderBilan();
+}
+
+function showTracker() {
+  document.querySelector("table").style.display = "table";
+  document.getElementById("bilan").style.display = "none";
+}
+
+function renderBilan() {
+  const history = JSON.parse(localStorage.getItem("history")) || [];
+  const current = calculateWeeklySummary();
+
+  document.getElementById("bilan-semaine").innerHTML = `
+    <strong>Cette semaine :</strong><br>
+    ✅ Réussite : <b>${current}%</b>
+  `;
+
+  if (history.length === 0) {
+    document.getElementById("historique").innerHTML =
+      "<p>Aucun historique pour le moment.</p>";
+    return;
+  }
+
+  let html = "<ul>";
+  history.forEach((w, i) => {
+    html += `<li>📅 ${w.date} — ${w.weekly}%</li>`;
+  });
+  html += "</ul>";
+
+  document.getElementById("historique").innerHTML = html;
+}
+</script>
+
