@@ -317,3 +317,61 @@ window.onload = () => {
 };
 </script>
 
+<canvas id="chart" width="300" height="160" style="margin:16px 0;"></canvas>
+
+<script>
+function drawChart(daily) {
+  const canvas = document.getElementById("chart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const barWidth = 30;
+  const gap = 10;
+  const maxHeight = 100;
+
+  daily.forEach((d, i) => {
+    const height = (d.percent / 100) * maxHeight;
+    ctx.fillStyle = "#84A98C";
+    ctx.fillRect(
+      i * (barWidth + gap),
+      maxHeight - height + 20,
+      barWidth,
+      height
+    );
+
+    ctx.fillStyle = "#2D6A4F";
+    ctx.font = "12px sans-serif";
+    ctx.fillText(d.day[0], i * (barWidth + gap) + 10, 140);
+  });
+}
+</script>
+
+drawChart(daily);
+
+<button onclick="exportPDF()" style="
+  margin-top:12px;
+  padding:12px;
+  width:100%;
+  background:#2D6A4F;
+  color:white;
+  border:none;
+  border-radius:8px;
+  font-size:16px;">
+📄 Exporter le bilan en PDF
+</button>
+
+<script>
+function exportPDF() {
+  const tracker = document.querySelector("table");
+  const bilan = document.getElementById("bilan");
+
+  tracker.style.display = "none";
+  bilan.style.display = "block";
+
+  window.print();
+
+  tracker.style.display = "table";
+}
+</script>
